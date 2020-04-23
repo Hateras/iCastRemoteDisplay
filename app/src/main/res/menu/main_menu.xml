@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/mi_say_hello"
+        android:title="@string/mi_say_hello_title"
+        app:showAsAction="always"
+    />
+
+    <item
+        android:id="@+id/mi_action_cast"
+        android:title="@string/mi_action_cast_title"
+        app:showAsAction="always"
+        app:actionProviderClass="androidx.mediarouter.app.MediaRouteActionProvider"
+    />
+</menu>
