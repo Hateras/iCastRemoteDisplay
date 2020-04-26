@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
 import com.google.android.gms.cast.CastRemoteDisplayLocalService;
+import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.common.api.Status;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MediaRouter mediaRouter;
     private MediaRouteSelector mediaRouteSelector;
+    private MenuItem mediaRouteMenuItem;
     private CastDevice castDevice;
 
     @Override
@@ -41,16 +43,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
 
+        mediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu, R.id.mi_action_cast);
+        /*
         if (mediaRouteSelector != null) {
             MenuItem mediaRouteMenuItem = menu.findItem(R.id.mi_action_cast);
+
             if (MenuItemCompat.getActionProvider(mediaRouteMenuItem) instanceof MediaRouteActionProvider) {
                 MediaRouteActionProvider mediaRouteActionProvider = (MediaRouteActionProvider) MenuItemCompat.getActionProvider(mediaRouteMenuItem);
                 mediaRouteActionProvider.setRouteSelector(mediaRouteSelector);
             }
         }
+        */
         return true;
     }
 
