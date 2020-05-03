@@ -28,7 +28,8 @@
 
         </service>
 
+        <meta-data android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+            android:value="bg.lis.icastremotedisplay.CastOptionsProvider"/>
     </application>
-    <meta-data android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-        android:value="bg.lis.icastremotedisplay.CastOptionsProvider"/>
+
 </manifest>

@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/mi_say_hello"
-        android:title="@string/mi_say_hello_title"
-        app:showAsAction="always"
-    />
-
-    <item
         android:id="@+id/mi_action_cast"
         android:title="@string/mi_action_cast_title"
         app:showAsAction="always"

@@ -1,13 +1,17 @@
 package bg.lis.icastremotedisplay;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.mediarouter.app.MediaRouteActionProvider;
 import androidx.mediarouter.media.MediaRouteSelector;
 import androidx.mediarouter.media.MediaRouter;
 
+import android.Manifest;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,6 +23,7 @@ import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
 import com.google.android.gms.cast.CastRemoteDisplayLocalService;
 import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.common.api.Status;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private MediaRouteSelector mediaRouteSelector;
     private MenuItem mediaRouteMenuItem;
     private CastDevice castDevice;
+    private CastContext castContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +44,22 @@ public class MainActivity extends AppCompatActivity {
 
         textView1 = (TextView)findViewById(R.id.textView1);
 
+        CheckForPermision();
+
+        castContext = CastContext.getSharedInstance(this);
+
         initMediaRouter();
+    }
+
+    private void CheckForPermision() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED) {
+            textView1.setText("Permission is not granted");
+            // Permission is not granted
+        }
+        else{
+            textView1.setText("Permission granted!");
+        }
     }
 
     @Override
@@ -61,17 +82,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.mi_say_hello:
-                onMIActionCast();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -89,10 +99,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void onMIActionCast() {
-        textView1.setText("Well, hello there!");
-    }
-
     private boolean isRemoteDisplaying() {
         return CastRemoteDisplayLocalService.getInstance() != null;
     }
@@ -100,7 +106,9 @@ public class MainActivity extends AppCompatActivity {
     private void initMediaRouter() {
         // We check if we are in the correct API version
         mediaRouter = MediaRouter.getInstance(getApplicationContext());
-        mediaRouteSelector = new MediaRouteSelector.Builder().addControlCategory(CastMediaControlIntent.categoryForCast(getString(R.string.app_cast_id))).build();
+        //String appIDString = CastMediaControlIntent. DEFAULT_MEDIA_RECEIVER_APPLICATION_ID;
+        String appIDString = getString(R.string.app_cast_id);
+        mediaRouteSelector = new MediaRouteSelector.Builder().addControlCategory(CastMediaControlIntent.categoryForCast(appIDString)).build();
         if (isRemoteDisplaying()) {
             this.castDevice = CastDevice.getFromBundle(mediaRouter.getSelectedRoute().getExtras());
         } else {
@@ -119,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onRouteSelected(MediaRouter router, MediaRouter.RouteInfo info) {
             castDevice = CastDevice.getFromBundle(info.getExtras());
-
             // At this point a Cast Device is selected and we start to Cast to this Device.
             startCastService(castDevice);
         }
@@ -140,12 +147,14 @@ public class MainActivity extends AppCompatActivity {
 
         CastRemoteDisplayLocalService.NotificationSettings settings = new CastRemoteDisplayLocalService.NotificationSettings.Builder().setNotificationPendingIntent(notificationPendingIntent).build();
 
+        //String appIDString = CastMediaControlIntent. DEFAULT_MEDIA_RECEIVER_APPLICATION_ID;
+        String appIDString = getString(R.string.app_cast_id);
         CastRemoteDisplayLocalService.startService(MainActivity.this, PresentationService.class,
-                getString(R.string.app_cast_id), castDevice, settings,
+                appIDString, castDevice, settings,
                 new CastRemoteDisplayLocalService.Callbacks() {
                     @Override
                     public void onServiceCreated(CastRemoteDisplayLocalService service) {
-                        ((PresentationService) service).setRemoteText("Hello, Remote!");
+                       // ((PresentationService) service).setRemoteText("Hello, Remote!");
                     }
 
                     @Override
@@ -163,6 +172,12 @@ public class MainActivity extends AppCompatActivity {
                         //
                     }
                 });
+        if (CastRemoteDisplayLocalService.getInstance() != null) {
+            textView1.setText(CastRemoteDisplayLocalService.getInstance().getClass().toString());
+        } else {
+            textView1.setText("CastRemoteDisplayLocalService.getInstance() is NULL");
+        }
+
 
     }
 }
