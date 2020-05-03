@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem mediaRouteMenuItem;
     private CastDevice castDevice;
     private CastContext castContext;
+    // delete me!
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
